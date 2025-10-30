@@ -1,0 +1,12 @@
+{
+  "name": "eco-mission",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"pnpm run frontend\" \"pnpm run backend\"",
+    "frontend": "cd frontend && pnpm run dev",
+    "backend": "cd backend && pnpm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
