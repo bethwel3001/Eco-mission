@@ -1,0 +1,11 @@
+export { default as LeafIcon } from './LeafIcon';
+export { default as PlanetIcon } from './PlanetIcon';
+export { default as AnalyticsIcon } from './AnalyticsIcon';
+export { default as UserIcon } from './UserIcon';
+export { default as LogoutIcon } from './LogoutIcon';
+export { default as QRIcon } from './QRIcon';
+export { default as TruckIcon } from './TruckIcon';
+export { default as QuizIcon } from './QuizIcon';
+export { default as UsersIcon } from './UsersIcon';
+export { default as CheckIcon } from './CheckIcon';
+export { default as PlayIcon } from './PlayIcon';
