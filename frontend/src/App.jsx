@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import LoginPage from './pages/LoginPage'
-import DashboardPage from './pages/DashboardPage'
-import Analytics from './components/Analytics'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
 import Notification from './components/Notification'
+import Footer from './components/Footer'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -11,25 +11,13 @@ function App() {
   const [notifications, setNotifications] = useState([])
 
   useEffect(() => {
-    // Simulate planet health decay over time (crisis loop)
-    if (user) {
-      const interval = setInterval(() => {
-        setPlanetHealth(prev => {
-          const newHealth = Math.max(30, prev - 0.1)
-          if (newHealth < 40 && prev >= 40) {
-            addNotification({
-              type: 'warning',
-              title: 'Planet Health Critical!',
-              message: 'Your ecosystem needs attention. Complete missions to heal it.',
-              duration: 5000
-            })
-          }
-          return newHealth
-        })
-      }, 60000)
-      return () => clearInterval(interval)
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) {
+      const userData = JSON.parse(savedUser)
+      setUser(userData)
+      setPlanetHealth(userData.planetHealth || 75)
     }
-  }, [user])
+  }, [])
 
   const addNotification = (notification) => {
     const id = Date.now()
@@ -43,6 +31,7 @@ function App() {
   const login = (userData) => {
     setUser(userData)
     setPlanetHealth(userData.planetHealth || 75)
+    localStorage.setItem('user', JSON.stringify(userData))
     addNotification({
       type: 'success',
       title: 'Welcome to Eco-Mission!',
@@ -61,46 +50,43 @@ function App() {
     setTimeout(() => {
       setUser(null)
       setPlanetHealth(75)
+      localStorage.removeItem('user')
     }, 2000)
   }
 
   const completeMission = (missionId, points, missionName) => {
     const healthBoost = points / 20
-    const oldHealth = planetHealth
     const newHealth = Math.min(100, planetHealth + healthBoost)
+    const newPoints = user.points + points
     
     setPlanetHealth(newHealth)
-    
     setUser(prev => ({
       ...prev,
-      points: prev.points + points,
+      points: newPoints,
       completedMissions: [...(prev.completedMissions || []), missionId]
     }))
 
-    // Show notification
+    const updatedUser = {
+      ...user,
+      points: newPoints,
+      completedMissions: [...(user.completedMissions || []), missionId],
+      planetHealth: newHealth
+    }
+    localStorage.setItem('user', JSON.stringify(updatedUser))
+
     addNotification({
       type: 'success',
       title: 'Mission Complete!',
       message: `+${points} points from ${missionName}`,
       duration: 3000
     })
-
-    // Show level up notification
-    if (Math.floor(oldHealth / 10) < Math.floor(newHealth / 10)) {
-      addNotification({
-        type: 'celebration',
-        title: 'Level Up!',
-        message: `Your planet health reached ${Math.floor(newHealth/10)*10}%!`,
-        duration: 4000
-      })
-    }
   }
 
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-teal-50">
-        {/* Notifications Container */}
-        <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm w-full sm:w-auto">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-teal-50 flex flex-col">
+        {/* Fixed Notification Container */}
+        <div className="fixed top-20 right-4 z-50 space-y-2 w-full max-w-sm">
           {notifications.map(notification => (
             <Notification
               key={notification.id}
@@ -113,34 +99,29 @@ function App() {
           ))}
         </div>
 
-        <Routes>
-          <Route 
-            path="/login" 
-            element={!user ? <LoginPage onLogin={login} /> : <Navigate to="/dashboard" />} 
-          />
-          <Route 
-            path="/dashboard" 
-            element={user ? (
-              <DashboardPage 
-                user={user} 
-                onLogout={logout} 
-                planetHealth={planetHealth}
-                onCompleteMission={completeMission}
-              />
-            ) : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/analytics" 
-            element={user ? (
-              <Analytics 
-                user={user} 
-                onLogout={logout} 
-                planetHealth={planetHealth}
-              />
-            ) : <Navigate to="/login" />} 
-          />
-          <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
-        </Routes>
+        <div className="flex-1">
+          <Routes>
+            <Route 
+              path="/login" 
+              element={!user ? <Login onLogin={login} /> : <Navigate to="/dashboard" />} 
+            />
+            <Route 
+              path="/dashboard" 
+              element={user ? (
+                <Dashboard 
+                  user={user} 
+                  onLogout={logout} 
+                  planetHealth={planetHealth}
+                  onCompleteMission={completeMission}
+                />
+              ) : <Navigate to="/login" />} 
+            />
+            <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
+          </Routes>
+        </div>
+
+        {/* Footer - only show on dashboard */}
+        {user && <Footer />}
       </div>
     </Router>
   )
