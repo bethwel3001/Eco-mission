@@ -2,7 +2,7 @@
 Gamifying Sustainable Energy for the Next Generation
 
 Eco-Mission turns responsible energy consumption into an engaging game where users nurture a virtual planet through real-world sustainable actions. Built for Green Wells Energies Hackathon.
-
+![Dashboard](docs/dashboard.png)
 [Try the Live Demo](https://wonderful-kheer-29f173.netlify.app/login)
 ## What is Eco-Mission?
 Eco-Mission is a mobile app that addresses the engagement gap in sustainable energy by making eco-friendly habits fun and rewarding. Users manage a virtual planet whose health directly reflects their real-world energy choices with Green Wells Energies.
