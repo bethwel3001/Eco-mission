@@ -23,7 +23,7 @@ const Notification = ({ type, title, message, duration, onClose }) => {
   }, [duration, onClose])
 
   const getNotificationStyles = () => {
-    const baseStyles = "transform transition-all duration-300 ease-out max-w-sm w-full bg-white/95 backdrop-blur-md rounded-xl shadow-lg border-l-4 p-4 relative overflow-hidden"
+    const baseStyles = "transform transition-all duration-300 ease-out w-full max-w-sm bg-white/95 backdrop-blur-md rounded-xl shadow-lg border-l-4 p-4 relative overflow-hidden"
     
     switch (type) {
       case 'success':
@@ -34,8 +34,6 @@ const Notification = ({ type, title, message, duration, onClose }) => {
         return `${baseStyles} border-red-500`
       case 'info':
         return `${baseStyles} border-blue-500`
-      case 'celebration':
-        return `${baseStyles} border-purple-500`
       default:
         return `${baseStyles} border-gray-500`
     }
@@ -44,17 +42,15 @@ const Notification = ({ type, title, message, duration, onClose }) => {
   const getIcon = () => {
     switch (type) {
       case 'success':
-        return 'fas fa-check-circle text-green-500'
+        return 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
       case 'warning':
-        return 'fas fa-exclamation-triangle text-yellow-500'
+        return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z'
       case 'error':
-        return 'fas fa-times-circle text-red-500'
+        return 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'
       case 'info':
-        return 'fas fa-info-circle text-blue-500'
-      case 'celebration':
-        return 'fas fa-trophy text-purple-500'
+        return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
       default:
-        return 'fas fa-bell text-gray-500'
+        return 'M15 17h5l-5 5v-5zM4 6h16M4 12h16M4 18h16'
     }
   }
 
@@ -64,7 +60,6 @@ const Notification = ({ type, title, message, duration, onClose }) => {
         ? 'translate-x-0 opacity-100' 
         : 'translate-x-full opacity-0'
     }`}>
-      {/* Progress Bar */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gray-200">
         <div 
           className={`h-full transition-all duration-50 ease-linear ${
@@ -72,14 +67,16 @@ const Notification = ({ type, title, message, duration, onClose }) => {
             type === 'warning' ? 'bg-yellow-500' :
             type === 'error' ? 'bg-red-500' :
             type === 'info' ? 'bg-blue-500' :
-            'bg-purple-500'
+            'bg-gray-500'
           }`}
           style={{ width: `${progress}%` }}
         ></div>
       </div>
 
       <div className="flex items-start space-x-3">
-        <i className={`${getIcon()} text-lg mt-0.5 flex-shrink-0`}></i>
+        <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={getIcon()} />
+        </svg>
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-gray-900 text-sm">{title}</h3>
           <p className="text-gray-600 text-sm mt-1">{message}</p>
@@ -91,7 +88,9 @@ const Notification = ({ type, title, message, duration, onClose }) => {
           }}
           className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors duration-200"
         >
-          <i className="fas fa-times"></i>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
     </div>
