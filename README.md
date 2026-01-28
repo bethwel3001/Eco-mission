@@ -48,12 +48,11 @@ pnpm build
 ```
 #  How It Works
 1. Sign Up - Create your account and get your virtual planet
-
 2. Complete Missions - Scan QR codes, choose eco-deliveries, take safety quizzes
-
 3. Heal Your Planet - Watch your planet thrive as you make sustainable choices
-
 4. Track Progress - See your environmental impact with beautiful analytics
-
 5. Connect with Friends - Invite others and build a sustainable community
+
+# Made with passion by Be Tu, powered by ambition. (:
+
 

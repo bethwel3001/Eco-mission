@@ -341,7 +341,7 @@ app.post('/api/init-data', async (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
-    message: 'Eco-Mission API is running',
+    message: 'API running ...',
     timestamp: new Date().toISOString()
   });
 });
@@ -371,7 +371,7 @@ const PORT = process.env.PORT || 5000;
 mongoose.connection.on('connected', () => {
   console.log(' Connected to MongoDB');
   app.listen(PORT, () => {
-    console.log(` Eco-Mission API running on port ${PORT}`);
+    console.log(`API running on port ${PORT}`);
     console.log(` Health check: http://localhost:${PORT}/api/health`);
     console.log(` Initialize data: POST http://localhost:${PORT}/api/init-data`);
   });

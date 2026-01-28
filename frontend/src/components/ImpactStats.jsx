@@ -1,7 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { FaLeaf, FaWater, FaBolt, FaTree } from 'react-icons/fa'
+
+const ANIMATION_DURATION = 1200
+const ANIMATION_STEPS = 40
+const TREE_CO2_RATIO = 15
+
+const STATS = [
+  { key: 'co2', label: 'CO₂ Prevented', unit: 'kg', color: 'text-emerald-600', icon: <FaLeaf className="w-5 h-5" /> },
+  { key: 'water', label: 'Water Saved', unit: 'L', color: 'text-blue-600', icon: <FaWater className="w-5 h-5" /> },
+  { key: 'energy', label: 'Energy Saved', unit: 'kWh', color: 'text-yellow-600', icon: <FaBolt className="w-5 h-5" /> },
+  { key: 'trees', label: 'Tree Equivalent', unit: 'trees', color: 'text-green-700', icon: <FaTree className="w-5 h-5" /> }
+]
 
 const ImpactStats = ({ impact }) => {
-  const [animatedStats, setAnimatedStats] = useState({
+  const [values, setValues] = useState({
     co2: 0,
     water: 0,
     energy: 0,
@@ -9,112 +21,64 @@ const ImpactStats = ({ impact }) => {
   })
 
   useEffect(() => {
-    const duration = 2000
-    const steps = 60
-    const stepDuration = duration / steps
-
     let step = 0
-    const timer = setInterval(() => {
-      step++
-      const progress = step / steps
+    const stepTime = ANIMATION_DURATION / ANIMATION_STEPS
 
-      setAnimatedStats({
+    const interval = setInterval(() => {
+      step += 1
+      const progress = Math.min(step / ANIMATION_STEPS, 1)
+
+      setValues({
         co2: Math.round(impact.co2 * progress),
         water: Math.round(impact.water * progress),
         energy: Math.round(impact.energy * progress),
-        trees: Math.round((impact.co2 * progress) / 15)
+        trees: Math.round((impact.co2 * progress) / TREE_CO2_RATIO)
       })
 
-      if (step >= steps) clearInterval(timer)
-    }, stepDuration)
+      if (progress === 1) clearInterval(interval)
+    }, stepTime)
 
-    return () => clearInterval(timer)
+    return () => clearInterval(interval)
   }, [impact])
 
-  const stats = [
-    {
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      label: 'CO2 Prevented',
-      value: animatedStats.co2,
-      unit: 'kg',
-      color: 'text-emerald-500',
-      bg: 'bg-emerald-50'
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-        </svg>
-      ),
-      label: 'Water Saved',
-      value: animatedStats.water,
-      unit: 'L',
-      color: 'text-blue-500',
-      bg: 'bg-blue-50'
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      ),
-      label: 'Energy Saved',
-      value: animatedStats.energy,
-      unit: 'kWh',
-      color: 'text-yellow-500',
-      bg: 'bg-yellow-50'
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-        </svg>
-      ),
-      label: 'Trees Equivalent',
-      value: animatedStats.trees,
-      unit: 'trees',
-      color: 'text-green-600',
-      bg: 'bg-green-50'
-    }
-  ]
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      {stats.map((stat, index) => (
-        <div 
-          key={stat.label}
-          className={`${stat.bg} rounded-2xl p-6 border-2 border-white shadow-lg hover-lift transition-all duration-300 animate-fadeIn`}
-          style={{ animationDelay: `${index * 0.1}s` }}
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {STATS.map((stat, index) => (
+        <div
+          key={stat.key}
+          className={`flex items-center space-x-3 rounded-xl border border-gray-200 bg-white px-4 py-3 sm:p-5 
+                      transform transition duration-500 ease-out animate-fadeIn opacity-0 translate-y-4`}
+          style={{
+            animationDelay: `${index * 0.1}s`,
+            animationFillMode: 'forwards',
+            animationName: 'fadeInUp'
+          }}
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className={`p-2 rounded-lg ${stat.bg.replace('50', '100')}`}>
-              {stat.icon}
-            </div>
-            <div className={`text-2xl font-bold ${stat.color}`}>
-              {stat.value}
-              <span className="text-sm ml-1">{stat.unit}</span>
-            </div>
+          {/* Icon */}
+          <div className={`p-2 rounded-full bg-gray-100 ${stat.color}`}>
+            {stat.icon}
           </div>
-          <h3 className="font-semibold text-gray-900 mb-2">{stat.label}</h3>
-          
-          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-            <div 
-              className={`h-2 rounded-full transition-all duration-1000 ease-out ${
-                stat.label.includes('CO2') ? 'bg-emerald-500' :
-                stat.label.includes('Water') ? 'bg-blue-500' :
-                stat.label.includes('Energy') ? 'bg-yellow-500' : 'bg-green-500'
-              }`}
-              style={{ 
-                width: `${(stat.value / (impact[stat.label.toLowerCase().split(' ')[0]] || 1)) * 100}%` 
-              }}
-            ></div>
+
+          {/* Label + Value */}
+          <div className="flex flex-col">
+            <span className="text-xs sm:text-sm text-gray-500">{stat.label}</span>
+            <div className="flex items-baseline space-x-1">
+              <span className={`text-lg sm:text-xl font-semibold ${stat.color}`}>
+                {values[stat.key]}
+              </span>
+              <span className="text-xs sm:text-sm text-gray-400">{stat.unit}</span>
+            </div>
           </div>
         </div>
       ))}
+
+      {/* Animation keyframes */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          0% { opacity: 0; transform: translateY(12px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }

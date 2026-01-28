@@ -1,0 +1,10 @@
+services:
+  fdir:
+    image: fdir
+    build:
+      context: frontend/node_modules/.pnpm/node_modules/fdir
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3000:3000
